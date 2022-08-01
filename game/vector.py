@@ -1,11 +1,13 @@
 import numpy as np
+from game.constants import *
+
+
 class Grid:
     INT_MAX = 10000
 
     def __init__(self):
 
         self.desc = "This object is used to do math with vectors."
-
 
     def poly_check(self, points, p):
 
@@ -43,7 +45,20 @@ class Grid:
         else:
             return True
 
-
-    def twodimensionalsum(self, p1 , p2):
+    def twodimensionalsum(self, p1, p2):
         """given (a,b) and (c,d) return (a+c, b+d)"""
         return (p1[0] + p2[0], p1[1] + p2[1])
+
+    def round_num(self, number, roundby=None):
+        """if roundby is none default to TILESIZE constant"""
+        if not roundby:
+            return TILESIZE * (number // TILESIZE)
+        else:
+            return roundby * (number // roundby)
+
+    def rounder(self, number, roundby=None):
+        """same as round_num but no scalar if rounder is none default to TILESIZE constant"""
+        if not roundby:
+            return (number // TILESIZE)
+        else:
+            return (number // roundby)

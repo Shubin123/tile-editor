@@ -76,11 +76,12 @@ class Brush:
     def draw_tile_at(self, x, y):
         """doubles as setter for y as z will choose a integer division from
         y // 32 as a layer """
-        layer_height = TILESIZE * (y // TILESIZE
-                                   )  # round to nearest base layer
-        edge_place = TILESIZE * (x // TILESIZE
-                                 )  # place adjacent horizontal edged tiles
-        self.layers[y // TILESIZE].add((x // TILESIZE, y // TILESIZE))
+        # round to nearest base layer
+        # place adjacent horizontal edged tiles
+        layer_height = self.grid.round_num(y)
+        edge_place = self.grid.round_num(x)
+        self.layers[self.grid.rounder(y)].add(
+            (self.grid.rounder(x), self.grid.rounder(y)))
 
         self.screen.blit(self.tiles.get_tile(self.tile_controller),
                          (edge_place, layer_height))
@@ -173,7 +174,7 @@ class UI():
         self.layers = inheritbrush.layers
         self.tiles = inheritbrush.tiles
 
-        self.brush = inheritbrush  # use for tile_controller
+        self.brush = inheritbrush  # use for tile_controller and math with grid
 
     def draw_brush_toggle(self, toggle):
         """draw the current brush toggle:1 [curr, next, prev], toggle:2 [place, delete] """
@@ -229,10 +230,11 @@ class UI():
             " | Brush Placement: " + str(self.brush_layer2) +
             " | Tilesheet Block: " + str(self.brush.tile_controller[0] + 1) +
             "x" + str(self.brush.tile_controller[1] + 1), True, WHITE)
-
+        font_height = SCREEN_HEIGHT - FONT_SIZE
         pygame.draw.rect(
             self.screen, BLACK,
-            pygame.Rect(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, SCREEN_WIDTH))
+            pygame.Rect(0, self.brush.grid.round_num(font_height),
+                        SCREEN_WIDTH, SCREEN_HEIGHT))
 
         self.screen.blit(render_brush, (0, SCREEN_HEIGHT - FONT_SIZE))
 

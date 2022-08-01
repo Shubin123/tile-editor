@@ -23,11 +23,12 @@ class Game:
         self.allow_right = False
         self.allow_middle = False
 
-        self.tiles = Tilesheet('lib/pictures/Terrain_Map.png',
-                               width = TILESIZE, # assuming square tiles
-                               height = TILESIZE, # we can import tile maps that are non square
-                               map_width=TILESHEET_SIZES[0][0],
-                               map_height=TILESHEET_SIZES[0][1])
+        self.tiles = Tilesheet(
+            'lib/pictures/Terrain_Map.png',
+            width=TILESIZE,  # assuming square tiles
+            height=TILESIZE,  # we can import tile maps that are non square
+            map_width=TILESHEET_SIZES[0][0],
+            map_height=TILESHEET_SIZES[0][1])
         self.layers = [set() for i in range(TILESIZE)]  # [ {(x, y)} ]
         self.brush = Brush(self.screen, self.layers, self.tiles)
         self.ui = UI(self.brush)
