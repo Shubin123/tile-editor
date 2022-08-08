@@ -14,7 +14,7 @@ class Grid:
 
         #layer v2 [y overlap][x screen][y screen]
         self.layers = np.empty((gridheight, gridwidth, gridheight,
-                                2, 2),
+                                3, 2),
                                np.float32)
         self.layers[:] = np.nan
 

@@ -17,10 +17,10 @@ class Brush:
     def draw_border(self, x, y, overlap="next"):
         # self.draw_tile_at(x, y)
         # x,y are GRID CORDINATES NEAREST TO MOUSE when shift is pressed
-        tilex = self.brush.grid.rounder(x)
-        tiley = self.brush.grid.rounder(y)
-        screenx = self.brush.grid.round_num(x)
-        screeny = self.brush.grid.round_num(y)
+        tilex = self.grid.rounder(x)
+        tiley = self.grid.rounder(y)
+        screenx = self.grid.round_num(x)
+        screeny = self.grid.round_num(y)
         line_color = (255, 0, 0)
         line_highlight = (0, 255, 0)
         points = [[(0, 24), (15, 31), (15, 16), (0, 7)],
@@ -60,17 +60,15 @@ class Brush:
             self.draw_adjecent_face(overlap=overlap, face="left", x=x, y=y)
 
             print("collided with left", tilex, tiley)
-            self.layers[tiley][tilex][tilex][0]
+            self.layers[tiley][tilex][tiley][1] = tilex - .5, tiley
 
         elif colliderright == True:
             # pygame.draw.polygon(self.screen, line_highlight, relpoints[1])
             # pygame.draw.polygon(self.screen, line_color, relpoints[0])
             # pygame.draw.polygon(self.screen, line_color, relpoints[2])
             self.draw_adjecent_face(overlap=overlap, face="right", x=x, y=y)
-            half_y = (y // (TILESIZE))
-            half_x = (x // (TILESIZE)) + .5
-            print("collided with right", half_x, half_y)
-            self.layers[y // TILESIZE].add((half_x, half_y))
+            print("collided with right", tilex, tiley)
+            self.layers[tiley][tilex][tiley][2] = tilex + .5, tiley
 
         # print("collider", collider)
         # print("collideleft", collideleft)
