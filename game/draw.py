@@ -17,6 +17,10 @@ class Brush:
     def draw_border(self, x, y, overlap="next"):
         # self.draw_tile_at(x, y)
         # x,y are GRID CORDINATES NEAREST TO MOUSE when shift is pressed
+        tilex = self.brush.grid.rounder(x)
+        tiley = self.brush.grid.rounder(y)
+        screenx = self.brush.grid.round_num(x)
+        screeny = self.brush.grid.round_num(y)
         line_color = (255, 0, 0)
         line_highlight = (0, 255, 0)
         points = [[(0, 24), (15, 31), (15, 16), (0, 7)],
@@ -54,10 +58,9 @@ class Brush:
             # pygame.draw.polygon(self.screen, line_color, relpoints[1])
             # pygame.draw.polygon(self.screen, line_color, relpoints[2])
             self.draw_adjecent_face(overlap=overlap, face="left", x=x, y=y)
-            half_y = (y // (TILESIZE))
-            half_x = (x // (TILESIZE)) - .5
-            print("collided with left", half_x, half_y)
-            self.layers[y // TILESIZE].add((half_x, half_y))
+
+            print("collided with left", tilex, tiley)
+            self.layers[tiley][tilex][tilex][0]
 
         elif colliderright == True:
             # pygame.draw.polygon(self.screen, line_highlight, relpoints[1])
@@ -77,13 +80,15 @@ class Brush:
         y // 32 as a layer """
         # round to nearest base layer
         # place adjacent horizontal edged tiles
-        layer_height = self.grid.round_num(y)
-        edge_place = self.grid.round_num(x)
-        self.layers[layer_height][edge_place][
-            layer_height] = edge_place, layer_height
 
+        tilex = self.grid.rounder(x)
+        tiley = self.grid.rounder(y)
+        screenx = self.grid.round_num(x)
+        screeny = self.grid.round_num(y)
+        self.layers[tiley][tilex][
+            tiley][0] = tilex, tiley
         self.screen.blit(self.tiles.get_tile(self.tile_controller),
-                         (edge_place, layer_height))
+                         (screenx, screeny))
 
     def draw_adjecent_at(self, x, y):
         terrainbase = self.tiles.get_tile(self.tile_controller)
@@ -164,6 +169,7 @@ class Brush:
 
 
 class UI():
+
     def __init__(self, inheritbrush):
         self.font = pygame.font.Font(FONT_PATH, FONT_SIZE)
         self.brush_layer1 = BRUSH_INIT_1
@@ -237,18 +243,17 @@ class UI():
 
         self.screen.blit(render_brush, (0, SCREEN_HEIGHT - FONT_SIZE))
 
-    def detected_tile(self, pos, overlap="next", deletion=BRUSH_INIT_2):
+    def detected_tile(self, posx, posy, overlap="next", deletion=BRUSH_INIT_2):
+        tilex = self.brush.grid.rounder(posx)
+        tiley = self.brush.grid.rounder(posy)
+        screenx = self.brush.grid.round_num(posx)
+        screeny = self.brush.grid.round_num(posy)
+        # print(self.brush.grid.is_nan(tilex, tiley))
+        if not self.brush.grid.is_nan(tilex, tiley):
+            if deletion == BRUSH_INIT_2:
+                self.brush.draw_border(screenx,screeny, overlap)
 
-        print("normalized pos", (pos[0] // TILESIZE), (pos[1] // TILESIZE),
-              self.layers)
-        for layer in self.layers:
-            for tile in layer:
-                if tile[0] == (pos[0]//TILESIZE) and tile[1] == \
-                        (pos[1]//TILESIZE):
 
-                    if deletion == BRUSH_INIT_2:
-                        self.brush.draw_border(tile[0] * TILESIZE,
-                                               tile[1] * TILESIZE, overlap)
-
-                    return True
-        return False
+            return True
+        else:
+            return False

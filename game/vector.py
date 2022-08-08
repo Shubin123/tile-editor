@@ -13,7 +13,8 @@ class Grid:
         gridheight = SCREEN_HEIGHT // TILESIZE
 
         #layer v2 [y overlap][x screen][y screen]
-        self.layers = np.empty((gridheight, gridwidth, gridheight, 2),
+        self.layers = np.empty((gridheight, gridwidth, gridheight,
+                                2, 2),
                                np.float32)
         self.layers[:] = np.nan
 
@@ -70,3 +71,10 @@ class Grid:
             return (number // TILESIZE)
         else:
             return (number // roundby)
+
+    def is_nan(self, tilex, tiley):
+        """check if self.layers has any nan values at bone layer"""
+        if np.isnan(self.layers[tiley][tilex][tiley][0][0]):
+            return True
+        else:
+            return False

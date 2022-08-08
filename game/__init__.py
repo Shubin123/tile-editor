@@ -78,7 +78,8 @@ class Game:
                                             pygame.mouse.get_pos()[1])
 
                 if self.allow_right:
-                    self.ui.detected_tile(pygame.mouse.get_pos(),
+                    self.ui.detected_tile(pygame.mouse.get_pos()[0],
+                                          pygame.mouse.get_pos()[1],
                                           overlap=self.ui.brush_layer1,
                                           deletion=self.ui.brush_layer2)
                 if self.allow_middle:
