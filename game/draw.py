@@ -14,65 +14,6 @@ class Brush:
         self.tile_controller = TILE_CONTROLLER
         self.maxflag = False
 
-    def draw_border(self, x, y, overlap="next"):
-        # self.draw_tile_at(x, y)
-        # x,y are GRID CORDINATES NEAREST TO MOUSE when shift is pressed
-        tilex = self.grid.rounder(x)
-        tiley = self.grid.rounder(y)
-        screenx = self.grid.round_num(x)
-        screeny = self.grid.round_num(y)
-        line_color = (255, 0, 0)
-        line_highlight = (0, 255, 0)
-        points = [[(0, 24), (15, 31), (15, 16), (0, 7)],
-                  [(31, 24), (16, 31), (16, 16), (31, 7)],
-                  [(1, 7), (15, 15), (31, 7), (15, 0)]]
-        relpoints = []
-        for point in points:
-            relpoints.append([(point[0][0] + x, point[0][1] + y),
-                              (point[1][0] + x, point[1][1] + y),
-                              (point[2][0] + x, point[2][1] + y),
-                              (point[3][0] + x, point[3][1] + y)])
-
-        # left = pygame.draw.polygon(self.screen, line_color, relpoints[0])
-        # right= pygame.draw.polygon(self.screen, line_color, relpoints[1])
-        # top  = pygame.draw.polygon(self.screen, line_color, relpoints[2])
-
-        colliderleft = self.grid.poly_check(relpoints[0],
-                                            pygame.mouse.get_pos())
-        colliderright = self.grid.poly_check(relpoints[1],
-                                             pygame.mouse.get_pos())
-        collidertop = self.grid.poly_check(relpoints[2],
-                                           pygame.mouse.get_pos())
-
-        # when placing a tile at face of a tile side tiles will be added to
-        # same layer. this half layer is also the top of the lower layer
-
-        if collidertop == True:
-            # pygame.draw.polygon(self.screen, line_highlight, relpoints[2])
-            # pygame.draw.polygon(self.screen, line_color, relpoints[0])
-            # pygame.draw.polygon(self.screen, line_color, relpoints[1])
-            self.draw_adjecent_face(overlap=overlap, face="top", x=x, y=y)
-
-        elif colliderleft == True:
-            # pygame.draw.polygon(self.screen, line_highlight, relpoints[0])
-            # pygame.draw.polygon(self.screen, line_color, relpoints[1])
-            # pygame.draw.polygon(self.screen, line_color, relpoints[2])
-            self.draw_adjecent_face(overlap=overlap, face="left", x=x, y=y)
-
-            print("collided with left", tilex, tiley)
-            self.layers[tiley][tilex][tiley][1] = tilex - .5, tiley
-
-        elif colliderright == True:
-            # pygame.draw.polygon(self.screen, line_highlight, relpoints[1])
-            # pygame.draw.polygon(self.screen, line_color, relpoints[0])
-            # pygame.draw.polygon(self.screen, line_color, relpoints[2])
-            self.draw_adjecent_face(overlap=overlap, face="right", x=x, y=y)
-            print("collided with right", tilex, tiley)
-            self.layers[tiley][tilex][tiley][2] = tilex + .5, tiley
-
-        # print("collider", collider)
-        # print("collideleft", collideleft)
-
     def draw_tile_at(self, x, y):
         """doubles as setter for y as z will choose a integer division from
         y // 32 as a layer """
@@ -83,8 +24,8 @@ class Brush:
         tiley = self.grid.rounder(y)
         screenx = self.grid.round_num(x)
         screeny = self.grid.round_num(y)
-        self.layers[tiley][tilex][
-            tiley][0] = tilex, tiley
+        self.layers[tilex][
+            tiley][tiley] = tilex, tiley
         self.screen.blit(self.tiles.get_tile(self.tile_controller),
                          (screenx, screeny))
 
@@ -94,7 +35,7 @@ class Brush:
 
     def draw_adjecent_face(self,
                            visible=True,
-                           overlap="next",
+                           overlap="curr",
                            face="top",
                            x=0,
                            y=0):
@@ -149,6 +90,7 @@ class Brush:
                 self.screen.blit(
                     terrainbase,
                     self.grid.twodimensionalsum((x, y), shift_visible[1]))
+
         elif visible and face == "right":
             if overlap == "next":
                 self.screen.blit(terrainbase, (x, y))
@@ -165,7 +107,96 @@ class Brush:
                     terrainbase,
                     self.grid.twodimensionalsum((x, y), shift_visible[2]))
 
+    def draw_border(self, x, y, overlap="curr", overlap_layer=0):
+        # self.draw_tile_at(x, y)
+        # x,y are GRID CORDINATES NEAREST TO MOUSE when shift is pressed
+        tilex = self.grid.rounder(x)
+        tiley = self.grid.rounder(y)
+        screenx = self.grid.round_num(x)
+        screeny = self.grid.round_num(y)
+        line_color = (255, 0, 0)
+        line_highlight = (0, 255, 0)
+        points = [[(0, 24), (15, 31), (15, 16), (0, 7)],
+                  [(31, 24), (16, 31), (16, 16), (31, 7)],
+                  [(1, 7), (15, 15), (31, 7), (15, 0)]]
+        relpoints = []
+        for point in points:
+            relpoints.append([(point[0][0] + x, point[0][1] + y),
+                              (point[1][0] + x, point[1][1] + y),
+                              (point[2][0] + x, point[2][1] + y),
+                              (point[3][0] + x, point[3][1] + y)])
 
+        # left = pygame.draw.polygon(self.screen, line_color, relpoints[0])
+        # right= pygame.draw.polygon(self.screen, line_color, relpoints[1])
+        # top  = pygame.draw.polygon(self.screen, line_color, relpoints[2])
+
+        colliderleft = self.grid.poly_check(relpoints[0],
+                                            pygame.mouse.get_pos())
+        colliderright = self.grid.poly_check(relpoints[1],
+                                             pygame.mouse.get_pos())
+        collidertop = self.grid.poly_check(relpoints[2],
+                                           pygame.mouse.get_pos())
+
+        # when placing a tile at face of a tile side tiles will be added to
+        # same layer. this half layer is also the top of the lower layer
+
+        if collidertop == True:
+            # pygame.draw.polygon(self.screen, line_highlight, relpoints[2])
+            # pygame.draw.polygon(self.screen, line_color, relpoints[0])
+            # pygame.draw.polygon(self.screen, line_color, relpoints[1])
+            self.draw_adjecent_face(overlap=overlap, face="top", x=x, y=y)
+
+        elif colliderleft == True:
+            # pygame.draw.polygon(self.screen, line_highlight, relpoints[0])
+            # pygame.draw.polygon(self.screen, line_color, relpoints[1])
+            # pygame.draw.polygon(self.screen, line_color, relpoints[2])
+
+            if tiley + overlap_layer < self.grid.depth:
+                if overlap_layer%2 == 1:
+                    screeny = y + 8 * (overlap_layer - 1)
+                    self.draw_adjecent_face(overlap=overlap, face="left",
+                                            x=x, y=screeny)
+                    self.layers[tilex][tiley][tiley + overlap_layer] = \
+                        tilex - .5, tiley
+                else:
+                    screenx = x - 16
+                    screeny = y + 8 * (overlap_layer - 1)
+                    self.draw_adjecent_face(overlap=overlap, face="right",
+                                            x=screenx,
+                                            y=screeny)
+                    self.layers[tilex][tiley][tiley + overlap_layer] = \
+                        tilex, tiley
+            else:
+                print("out of bounds")
+            print(self.layers)
+
+        #overlaplayer:y_i_zindex:y_i-1_zindex 0:0:0 1:1:.5, 2:2:1, 3:3:1.5,
+        # 4:4:2
+
+        elif colliderright == True:
+            # pygame.draw.polygon(self.screen, line_highlight, relpoints[1])
+            # pygame.draw.polygon(self.screen, line_color, relpoints[0])
+            # pygame.draw.polygon(self.screen, line_color, relpoints[2])
+            if tiley + overlap_layer < self.grid.depth:
+                if overlap_layer % 2 == 1:
+                    screeny = y + 8 * (overlap_layer - 1)
+                    self.draw_adjecent_face(overlap=overlap, face="right",
+                                            x=x, y=screeny)
+                    self.layers[tilex][tiley][tiley + overlap_layer] = \
+                        tilex - .5, tiley
+                else:
+                    screenx = x + 16
+                    screeny = y + 8 * (overlap_layer - 1)
+                    self.draw_adjecent_face(overlap=overlap, face="left",
+                                            x=screenx,
+                                            y=screeny)
+                    self.layers[tilex][tiley][tiley + overlap_layer] = \
+                        tilex, tiley
+            else:
+                print("out of bounds")
+
+        # print("collider", collider)
+        # print("collideleft", collideleft)
 class UI():
 
     def __init__(self, inheritbrush):
@@ -180,7 +211,8 @@ class UI():
         self.brush = inheritbrush  # use for tile_controller and math with grid
 
     def draw_brush_toggle(self, toggle):
-        """draw the current brush toggle:1 [curr, next, prev], toggle:2 [place, delete] """
+        """draw the current brush toggle:0 [curr, next, prev], toggle:1 [
+        place, delete] toggle:2 spritesheet switcher"""
         if toggle == 0:
             if self.brush_layer1 == "curr":
                 return setattr(self, "brush_layer1", "next")
@@ -221,9 +253,6 @@ class UI():
 
                 # traverse one full row from (0, 0) then go to next column left most
             else:
-                # print("max reached", self.brush.tile_controller[0] + 1,
-                #       self.brush.tile_controller[1] + 1)
-                # self.brush.tile_controller = ()
                 self.brush.maxflag = True
 
     def draw_brush_display(self):
@@ -241,15 +270,16 @@ class UI():
 
         self.screen.blit(render_brush, (0, SCREEN_HEIGHT - FONT_SIZE))
 
-    def detected_tile(self, posx, posy, overlap="next", deletion=BRUSH_INIT_2):
+    def detected_tile(self, posx, posy, overlap="curr", deletion=BRUSH_INIT_2):
         tilex = self.brush.grid.rounder(posx)
         tiley = self.brush.grid.rounder(posy)
         screenx = self.brush.grid.round_num(posx)
         screeny = self.brush.grid.round_num(posy)
-        # print(self.brush.grid.is_nan(tilex, tiley))
         if not self.brush.grid.is_nan(tilex, tiley):
-            if deletion == BRUSH_INIT_2:
-                self.brush.draw_border(screenx,screeny, overlap)
+            if deletion == BRUSH_INIT_2 and overlap == "curr":
+                tile_overlap = self.brush.grid.curr_tile(tilex, tiley) + 1
+                print(tile_overlap)
+                self.brush.draw_border(screenx, screeny, overlap, tile_overlap)
 
 
             return True

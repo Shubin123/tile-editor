@@ -3,6 +3,7 @@ from game.constants import *
 
 
 class Grid:
+
     INT_MAX = 10000
 
     def __init__(self):
@@ -11,10 +12,10 @@ class Grid:
 
         gridwidth = SCREEN_WIDTH // TILESIZE
         gridheight = SCREEN_HEIGHT // TILESIZE
-
+        self.depth = 2*gridheight # using y as z
         #layer v2 [y overlap][x screen][y screen]
-        self.layers = np.empty((gridheight, gridwidth, gridheight,
-                                3, 2),
+        self.layers = np.empty((gridwidth, gridheight,
+                                self.depth, 2),
                                np.float32)
         self.layers[:] = np.nan
 
@@ -73,8 +74,19 @@ class Grid:
             return (number // roundby)
 
     def is_nan(self, tilex, tiley):
-        """check if self.layers has any nan values at bone layer"""
-        if np.isnan(self.layers[tiley][tilex][tiley][0][0]):
+        """check if self.layers has any nan values starting at bone layer"""
+
+        if np.isnan(self.layers[tilex][tiley][tiley][0]):
             return True
+
         else:
             return False
+    def curr_tile(self, tilex, tiley):
+        """return the current tile at tilex, tiley using curr overlap (bone
+        behind screen)"""
+        depth_counter = 0
+        for i in range(tiley + 1, self.depth):
+            if not np.isnan(self.layers[tilex][tiley][i][0]):
+                depth_counter += 1
+
+        return depth_counter
