@@ -9,6 +9,14 @@ class Grid:
 
         self.desc = "This object is used to do math with vectors."
 
+        gridwidth = SCREEN_WIDTH // TILESIZE
+        gridheight = SCREEN_HEIGHT // TILESIZE
+
+        #layer v2 [y overlap][x screen][y screen]
+        self.layers = np.empty((gridheight, gridwidth, gridheight, 2),
+                               np.float32)
+        self.layers[:] = np.nan
+
     def poly_check(self, points, p):
 
         ax, ay, bx, by, cx, cy, dx, dy = points[0][0], points[0][1], \

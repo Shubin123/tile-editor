@@ -3,6 +3,7 @@ import pygame.locals
 
 from game.tilesheet import Tilesheet
 from game.draw import Brush, UI
+from game.vector import Grid
 from game.constants import *
 
 import sys
@@ -29,8 +30,10 @@ class Game:
             height=TILESIZE,  # we can import tile maps that are non square
             map_width=TILESHEET_SIZES[0][0],
             map_height=TILESHEET_SIZES[0][1])
-        self.layers = [set() for i in range(TILESIZE)]  # [ {(x, y)} ]
-        self.brush = Brush(self.screen, self.layers, self.tiles)
+
+        self.grid = Grid()
+        self.brush = Brush(self.screen, self.grid.layers, self.tiles,
+                           self.grid)
         self.ui = UI(self.brush)
 
     def handle_events(self):

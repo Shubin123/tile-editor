@@ -1,14 +1,13 @@
 import pygame
-from game.vector import Grid
 from game.constants import *
 
 
 class Brush:
-    def __init__(self, inherit_screen, inherit_layers, inherit_tiles):
+    def __init__(self, inherit_screen, inherit_layers, inherit_tiles,
+                 inherit_grid):
         """brush tooling"""
         self.desc = "brush tools!"
-        self.grid = Grid()
-
+        self.grid = inherit_grid
         self.tiles = inherit_tiles
         self.screen = inherit_screen
         self.layers = inherit_layers
@@ -80,8 +79,8 @@ class Brush:
         # place adjacent horizontal edged tiles
         layer_height = self.grid.round_num(y)
         edge_place = self.grid.round_num(x)
-        self.layers[self.grid.rounder(y)].add(
-            (self.grid.rounder(x), self.grid.rounder(y)))
+        self.layers[layer_height][edge_place][
+            layer_height] = edge_place, layer_height
 
         self.screen.blit(self.tiles.get_tile(self.tile_controller),
                          (edge_place, layer_height))
@@ -239,7 +238,9 @@ class UI():
         self.screen.blit(render_brush, (0, SCREEN_HEIGHT - FONT_SIZE))
 
     def detected_tile(self, pos, overlap="next", deletion=BRUSH_INIT_2):
-        """detected tile is meant for base tiles"""
+
+        print("normalized pos", (pos[0] // TILESIZE), (pos[1] // TILESIZE),
+              self.layers)
         for layer in self.layers:
             for tile in layer:
                 if tile[0] == (pos[0]//TILESIZE) and tile[1] == \

@@ -4,8 +4,8 @@
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-SCREEN_WIDTH = 4 * 16 * 16
-SCREEN_HEIGHT = 4 * 9 * 16
+SCREEN_WIDTH = 16 * 32 
+SCREEN_HEIGHT = 9 * 32
 
 #  tile options be sure ratio of one tile is divisible within screen size and tilesheet
 TILESIZE = 32
@@ -24,4 +24,3 @@ BRUSH_INIT_2 = "place"
 
 # tile controller starts with first tile at 0,0 on tilesheet finishes one row before moving to next column 0,0 -> 1, 0 -> 1, m ... n, 0 -> n,m
 TILE_CONTROLLER = 0, 0
-
