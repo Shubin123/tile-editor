@@ -4,8 +4,8 @@
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-SCREEN_WIDTH = 32*16*10
-SCREEN_HEIGHT = 32*9*10
+SCREEN_WIDTH = 32*4
+SCREEN_HEIGHT = 32*4
 
 #  tile options be sure ratio of one tile is divisible within screen size and tilesheet
 TILESIZE = 32

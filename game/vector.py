@@ -10,11 +10,11 @@ class Grid:
 
         self.desc = "This object is used to do math with vectors."
 
-        gridwidth = SCREEN_WIDTH // TILESIZE
-        gridheight = SCREEN_HEIGHT // TILESIZE
-        self.depth = 2*gridheight # using y as z
+        self.width = SCREEN_WIDTH // TILESIZE
+        self.height = SCREEN_HEIGHT // TILESIZE
+        self.depth = 2*self.height # using y as z
         #layer v2 [y overlap][x screen][y screen]
-        self.layers = np.empty((gridwidth, gridheight,
+        self.layers = np.empty((self.width, self.height,
                                 self.depth, 2),
                                np.float32)
         self.layers[:] = np.nan
@@ -73,14 +73,16 @@ class Grid:
         else:
             return (number // roundby)
 
-    def is_nan(self, tilex, tiley):
+    def is_nan(self, tilex, tiley, tilez = None):
         """check if self.layers has any nan values starting at bone layer"""
-
-        if np.isnan(self.layers[tilex][tiley][tiley][0]):
-            return True
-
+        if tilez is None:
+            if np.isnan(self.layers[tilex][tiley][tiley][0]):
+                return True
         else:
-            return False
+            if np.isnan(self.layers[tilex][tiley][tilez][0]):
+                return True
+
+        return False
     def curr_tile(self, tilex, tiley):
         """return the current tile at tilex, tiley using curr overlap (bone
         behind screen)"""

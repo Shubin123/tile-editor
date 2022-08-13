@@ -32,6 +32,8 @@ class Game:
             map_height=TILESHEET_SIZES[0][1])
 
         self.grid = Grid()
+
+
         self.brush = Brush(self.screen, self.grid.layers, self.tiles,
                            self.grid)
         self.ui = UI(self.brush)
@@ -55,9 +57,14 @@ class Game:
                     print("left click down")
                 if event.button == 2:
                     self.allow_middle = True
+                    self.brush.draw_from_map()
                     print("middle click down")
                 if event.button == 3:
                     self.allow_right = True
+                    self.ui.detected_tile(pygame.mouse.get_pos()[0],
+                                          pygame.mouse.get_pos()[1],
+                                          overlap=self.ui.brush_layer1,
+                                          deletion=self.ui.brush_layer2)
                     print("right click down")
 
             if event.type == pygame.MOUSEBUTTONUP:
@@ -78,10 +85,7 @@ class Game:
                                             pygame.mouse.get_pos()[1])
 
                 if self.allow_right:
-                    self.ui.detected_tile(pygame.mouse.get_pos()[0],
-                                          pygame.mouse.get_pos()[1],
-                                          overlap=self.ui.brush_layer1,
-                                          deletion=self.ui.brush_layer2)
+                    print("this is the right click in motion")
                 if self.allow_middle:
                     print("this is the middle click in motion")
                     # self.ui.detected_tile(pygame.mouse.get_pos(),

@@ -14,7 +14,26 @@ class Brush:
         self.tile_controller = TILE_CONTROLLER
         self.maxflag = False
 
-    def draw_tile_at(self, x, y):
+    def draw_from_map(self):
+
+        """draws all tiles from map"""
+        for x in range(self.grid.width):
+            for y in range(self.grid.height):
+                xfory = x
+                for z in range(self.grid.depth):
+                    if not self.grid.is_nan(x, y, z):
+                        if z%2 == 0:
+                            self.draw_tile_at(32*x, 32*(y + (z//2) - 1))
+                        elif self.layers[x][y][z][0] < xfory:
+                            self.draw_adjecent_face(face="left", x=32*x,
+                                                    y=32*(y))
+                        elif self.layers[x][y][z][0] > xfory:
+                            self.draw_adjecent_face(face="right", x=32*x,
+                                                    y=32*(y))
+
+
+
+    def draw_tile_at(self, x, y, z=None):
         """doubles as setter for y as z will choose a integer division from
         y // 32 as a layer """
         # round to nearest base layer
@@ -183,7 +202,7 @@ class Brush:
                     self.draw_adjecent_face(overlap=overlap, face="right",
                                             x=x, y=screeny)
                     self.layers[tilex][tiley][tiley + overlap_layer] = \
-                        tilex - .5, tiley
+                        tilex + .5, tiley
                 else:
                     screenx = x + 16
                     screeny = y + 8 * (overlap_layer - 1)
