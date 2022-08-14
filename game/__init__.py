@@ -61,6 +61,7 @@ class Game:
                     print("middle click down")
                 if event.button == 3:
                     self.allow_right = True
+
                     self.ui.detected_tile(pygame.mouse.get_pos()[0],
                                           pygame.mouse.get_pos()[1],
                                           overlap=self.ui.brush_layer1,

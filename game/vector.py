@@ -83,7 +83,7 @@ class Grid:
                 return True
 
         return False
-    def curr_tile(self, tilex, tiley):
+    def curr_tile(self, tilex, tiley, adj = "none"):
         """return the current tile at tilex, tiley using curr overlap (bone
         behind screen)"""
         depth_counter = 0

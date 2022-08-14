@@ -23,7 +23,7 @@ class Brush:
                 for z in range(self.grid.depth):
                     if not self.grid.is_nan(x, y, z):
                         if z%2 == 0:
-                            self.draw_tile_at(32*x, 32*(y + (z//2) - 1))
+                            self.draw_tile_at(32*x, 32*(y + (z//2)))
                         elif self.layers[x][y][z][0] < xfory:
                             self.draw_adjecent_face(face="left", x=32*x,
                                                     y=32*(y))
